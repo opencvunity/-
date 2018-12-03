@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Dec  3 22:25:49 2018
+
+@author: 高鑫
+"""
+
+import requests
+import json
+from requests.exceptions import RequestException
+from lxml import etree
+
+def get_one_page(url):#从猫眼电影网中获取每一页的内容
+    try:
+        headers = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'
+}
+        response = requests.get(url,headers = headers)
+        if response.status_code == 200:
+            response.encoding = 'utf-8'
+            return response.text
+        return None
+    except RequestException:
+        return None
+
+def parse_one_page(text):#解析每一页
+    html = etree.HTML(text)
+    result = html.xpath('//meta[@name = "description"]/@content')
+    print(result)
+        
+def create_url(infor):
+    url = 'https://baike.baidu.com/item/' + str(infor)
+    return url
+   
+if __name__ == '__main__':
+    infor = "许嵩"
+    url = create_url(infor)
+    text = get_one_page(url)
+    parse_one_page(text)
